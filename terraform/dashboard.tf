@@ -13,13 +13,13 @@ resource "aws_cloudwatch_dashboard" "main" {
         "metrics": [
           [
             "${var.student_name}",
-            "account_count.value"
+            "hello_world.value"
           ]
         ],
         "period": 300,
         "stat": "Maximum",
         "region": "eu-west-1",
-        "title": "Total number of accounts"
+        "title": "How many hello world served"
       }
     }
   ]

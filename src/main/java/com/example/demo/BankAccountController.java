@@ -30,11 +30,13 @@ public class BankAccountController implements ApplicationListener<ApplicationRea
     public BankAccountController(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
     }
-    
+
     @GetMapping("/")
     @Timed
     public ResponseEntity<String> helloWorld() {
+        meterRegistry.counter("hello_world").increment();
         return new ResponseEntity<>("Hello World", HttpStatus.OK);
+        
     }
 
     /**
@@ -75,7 +77,7 @@ public class BankAccountController implements ApplicationListener<ApplicationRea
      * Gets account info for an account
      *
      * @param accountId the account ID to get info from
-     * @return ResponseEntity<Account> 
+     * @return ResponseEntity<Account>
      */
     @Timed
     @GetMapping(path = "/account/{accountId}", consumes = "application/json", produces = "application/json")
