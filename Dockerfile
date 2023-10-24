@@ -1,9 +1,9 @@
-FROM maven:3.6-jdk-11 as byggmesterbob
+FROM maven:3.9-amazoncorretto-17 as byggmesterbob
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 RUN mvn package
 
-FROM adoptopenjdk/openjdk11:alpine-slim
+FROM openjdk:17-alpine3.14
 COPY --from=byggmesterbob /app/target/*.jar /app/application.jar
-ENTRYPOINT ["java","-jar","/app/application.jar"]
+CMD ["java","-jar","/app/application.jar"]
