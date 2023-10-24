@@ -4,6 +4,6 @@ COPY pom.xml .
 COPY src ./src
 RUN mvn package
 
-FROM openjdk:17-alpine3.14
+FROM amazoncorretto:17.0.9-alpine3.18
 COPY --from=byggmesterbob /app/target/*.jar /app/application.jar
 CMD ["java","-jar","/app/application.jar"]

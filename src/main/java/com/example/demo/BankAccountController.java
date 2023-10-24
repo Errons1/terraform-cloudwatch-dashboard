@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.math.BigDecimal.valueOf;
@@ -20,13 +21,20 @@ import static java.util.Optional.ofNullable;
 @RestController
 public class BankAccountController implements ApplicationListener<ApplicationReadyEvent> {
 
-    private Map<String, Account> theBank;
+
+    private Map<String, Account> theBank = new HashMap<>();
 
     private MeterRegistry meterRegistry;
 
     @Autowired
     public BankAccountController(MeterRegistry meterRegistry) {
         this.meterRegistry = meterRegistry;
+    }
+    
+    @GetMapping("/")
+    @Timed
+    public ResponseEntity<String> helloWorld() {
+        return new ResponseEntity<>("Hello World", HttpStatus.OK);
     }
 
     /**

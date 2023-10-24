@@ -139,14 +139,14 @@ Start applikasjonen med Cloud 9'
 mvn spring-boot:run
 ```
 
-Koden i dette repoet eksponerer et REST grensesnitt på http://localhost:8080/account
+Koden i dette repoet eksponerer et REST grensesnitt på https://mziqkmg2gc.eu-west-1.awsapprunner.com/
 
 ## Kall APIet fra en terminal I Cloud 9 
 
 * Opprette konto, eller dette saldo
 
 ```sh
-curl --location --request POST 'http://localhost:8080/account' \
+curl --location --request POST 'https://mziqkmg2gc.eu-west-1.awsapprunner.com/' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "id": 1,
@@ -156,14 +156,14 @@ curl --location --request POST 'http://localhost:8080/account' \
 
 * Se info om en konto
 ```sh 
-  curl --location --request GET 'http://localhost:8080/account/1' \
+  curl --location --request GET 'https://mziqkmg2gc.eu-west-1.awsapprunner.com//1' \
   --header 'Content-Type: application/json'|jq
 ```
 
 * Overføre penger fra en konto til en annen
 
 ```sh
-curl --location --request POST 'http://localhost:8080/account/2/transfer/3' \
+curl --location --request POST 'https://mziqkmg2gc.eu-west-1.awsapprunner.com//2/transfer/3' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "fromCountry": "SE",
