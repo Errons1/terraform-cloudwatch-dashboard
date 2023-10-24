@@ -3,24 +3,24 @@ package com.example.demo;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static java.math.BigDecimal.valueOf;
 import static java.util.Optional.ofNullable;
 
+@AllArgsConstructor
 @RestController
 public class BankAccountController implements ApplicationListener<ApplicationReadyEvent> {
 
-    private Map<String, Account> theBank = new HashMap();
+    private Map<String, Account> theBank;
 
     private MeterRegistry meterRegistry;
 
@@ -40,8 +40,7 @@ public class BankAccountController implements ApplicationListener<ApplicationRea
     @Timed
     public void transfer(@RequestBody Transaction tx, @PathVariable String fromAccount, @PathVariable String toAccount) {
         // Increment a metric called "transfer" every time this is called, and tag with from- and to country
-        meterRegistry.counter("transfer",
-                "from", tx.getFromCountry(), "to", tx.getToCountry()).increment();
+        meterRegistry.counter("transfer", "from", tx.getFromCountry(), "to", tx.getToCountry()).increment();
         Account from = getOrCreateAccount(fromAccount);
         Account to = getOrCreateAccount(toAccount);
         from.setBalance(from.getBalance().subtract(valueOf(tx.getAmount())));
@@ -52,10 +51,9 @@ public class BankAccountController implements ApplicationListener<ApplicationRea
      * Saves an account. Will create a new account if one does not exist.
      *
      * @param a the account Object
-     * @return
+     * @return ResponseEntity<Account>
      */
-    @PostMapping(path = "/account", consumes = "application/json",
-            produces = "application/json")
+    @PostMapping(path = "/account", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Account> updateAccount(@RequestBody Account a) {
         meterRegistry.counter("update_account").increment();
         Account account = getOrCreateAccount(a.getId());
@@ -69,7 +67,7 @@ public class BankAccountController implements ApplicationListener<ApplicationRea
      * Gets account info for an account
      *
      * @param accountId the account ID to get info from
-     * @return
+     * @return ResponseEntity<Account> 
      */
     @Timed
     @GetMapping(path = "/account/{accountId}", consumes = "application/json", produces = "application/json")
@@ -93,12 +91,11 @@ public class BankAccountController implements ApplicationListener<ApplicationRea
      * Denne meter-typen "Gauge" rapporterer en verdi hver gang noen kaller "size" metoden på
      * Verdisettet til HashMap
      *
-     * @param applicationReadyEvent
+     * @param applicationReadyEvent something
      */
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        Gauge.builder("account_count", theBank,
-                b -> b.values().size()).register(meterRegistry);
+        Gauge.builder("account_count", theBank, b -> b.values().size()).register(meterRegistry);
     }
 
     @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "account not found")
