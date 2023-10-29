@@ -53,21 +53,21 @@ jobs:
 #        init terraform on GitHub
       - name: Terraform Init
         id: init
-        working-directory: $DIR
+        working-directory: ${{ env.DIR }}
         run: terraform init
 
       - name: Terraform Plan
         id: plan
-        working-directory: $DIR
+        working-directory: ${{ env.DIR }}
         run: terraform plan -var="prefix=$PREFIX" -var="image=$IMAGE" -var="student_name=$STUDENT_NAME" -no-color
         continue-on-error: true
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
-        working-directory: $DIR
+        working-directory: ${{ env.DIR }}
         run: exit 1
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        working-directory: $DIR
+        working-directory: ${{ env.DIR }}
         run: terraform apply -var="prefix=$PREFIX" -var="image=$IMAGE" -var="student_name=$STUDENT_NAME" --auto-approve
