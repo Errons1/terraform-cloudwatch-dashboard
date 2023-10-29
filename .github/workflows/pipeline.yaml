@@ -42,6 +42,7 @@ jobs:
       IMAGE: 244530008913.dkr.ecr.eu-west-1.amazonaws.com/snle:latest
       PREFIX: snle
       STUDENT_NAME: snle
+      DIR: ./terraform
  #    TF_LOG: trace
     
     steps:
@@ -52,21 +53,21 @@ jobs:
 #        init terraform on GitHub
       - name: Terraform Init
         id: init
-        working-directory: ./terraform
+        working-directory: ${{ env.DIR }}
         run: terraform init
 
       - name: Terraform Plan
         id: plan
-        working-directory: ./terraform
+        working-directory: ${{ env.DIR }}
         run: terraform plan -var="prefix=$PREFIX" -var="image=$IMAGE" -var="student_name=$STUDENT_NAME" -no-color
         continue-on-error: true
 
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
-        working-directory: ./terraform
+        working-directory: ${{ env.DIR }}
         run: exit 1
 
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        working-directory: ./terraform
+        working-directory: ${{ env.DIR }}
         run: terraform apply -var="prefix=$PREFIX" -var="image=$IMAGE" -var="student_name=$STUDENT_NAME" --auto-approve
